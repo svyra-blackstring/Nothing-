@@ -58,7 +58,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 100px; /* Circular Edge */
+            border-radius: 100px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -155,7 +155,6 @@
         /* --- Full Screen Mode Hiding --- */
         .hide-ui header { transform: translateY(-100px); }
         .hide-ui footer { transform: translateY(100px); }
-
     </style>
 </head>
 <body>
@@ -171,7 +170,8 @@
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
             <div class="profile-section">
-                <button class="btn-new" onclick="toggleUI()">Toggle UI</button>
+                <!-- Updated: Button now links to project.html -->
+                <button class="btn-new" onclick="location.href='project.html'">Toggle UI</button>
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar" alt="User">
             </div>
         </div>
@@ -209,7 +209,7 @@
             }, 300);
         }
 
-        // Logic to Hide Nav Bars (Call this if you detect a sub-page load)
+        // (toggleUI still exists in JS if you want to keep the class toggling mechanism)
         function toggleUI() {
             document.body.classList.toggle('hide-ui');
         }
