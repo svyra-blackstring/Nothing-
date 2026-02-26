@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Architect AI | Mobile Flow</title>
+    <style>
+        :root {
+            --accent: #22c55e;
+            --glass: rgba(255, 255, 255, 0.8);
+            --text: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: #f0fdf4;
+            height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: var(--text);
+        }
+
+        /* --- Header --- */
+        nav {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: -1px; }
+        
+        .btn-next {
+            background: var(--text);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* --- Preview Canvas --- */
+        .canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: radial-gradient(circle at center, #ffffff 0%, #f0fdf4 100%);
+        }
+
+        /* --- The Chat Box (Mobile Native) --- */
+        #mainChat {
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            max-height: 500px;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .editable-area {
+            outline: none;
+            padding: 2px 5px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .editable-area:focus { background: rgba(34, 197, 94, 0.1); }
+
+        .chat-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+
+        .ai-bubble {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 18px 18px 18px 4px;
+            align-self: flex-start;
+            font-size: 0.95rem;
+            max-width: 85%;
+        }
+
+        .input-area {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .fake-input {
+            flex: 1;
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .send-circle {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Color Panel (Fixed for Mobile) --- */
+        .color-panel {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+            z-index: 200;
+        }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        .color-option.active { border-color: var(--text); transform: scale(1.1); }
+
+        /* --- Save Notification --- */
+        #toast {
+            position: fixed;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: 0.5s;
+            z-index: 1000;
+        }
+        #toast.show { top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="toast">Project Saved to Webflow</div>
+
+    <nav>
+        <div class="logo">ARCHITECT AI</div>
+        <button class="btn-next" onclick="saveToFlow()">Next</button>
+    </nav>
+
+    <div class="canvas">
+        <div id="mainChat">
+            <div class="chat-header">
+                <span class="editable-area" contenteditable="true">AI Assistant</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+            </div>
+            
+            <div class="messages">
+                <div class="ai-bubble">
+                    <div class="editable-area" contenteditable="true" id="welcomeMsg">What can I help you?</div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="fake-input editable-area" contenteditable="true">Type a message...</div>
+                <div class="send-circle">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="color-panel">
+        <div class="color-option active" style="background: #22c55e;" onclick="changeTheme('#22c55e', this)"></div>
+        <div class="color-option" style="background: #3b82f6;" onclick="changeTheme('#3b82f6', this)"></div>
+        <div class="color-option" style="background: #ef4444;" onclick="changeTheme('#ef4444', this)"></div>
+        <div class="color-option" style="background: #8b5cf6;" onclick="changeTheme('#8b5cf6', this)"></div>
+        <div class="color-option" style="background: #f59e0b;" onclick="changeTheme('#f59e0b', this)"></div>
+        <div class="color-option" style="background: #1e293b;" onclick="changeTheme('#1e293b', this)"></div>
+    </div>
+
+    <script>
+        function changeTheme(color, el) {
+            document.documentElement.style.setProperty('--accent', color);
+            // Highlight selected dot
+            document.querySelectorAll('.color-option').forEach(dot => dot.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function saveToFlow() {
+            // Get all user-edited values
+            const config = {
+                title: document.querySelector('.chat-header span').innerText,
+                welcome: document.getElementById('welcomeMsg').innerText,
+                placeholder: document.querySelector('.fake-input').innerText,
+                theme: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+                scriptSource: 'ai.js'
+            };
+
+            console.log("Saving Configuration to Webflow:", config);
+
+            // Trigger Save Toast
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            
+            // Logic to send to backend or localStorage instead of downloading
+            localStorage.setItem('savedChatConfig', JSON.stringify(config));
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                // Redirect logic would go here:
+                // window.location.href = "workflow-complete.html";
+            }, 2000);
+        }
+
+        // Prevent keyboard from breaking layout on mobile
+        window.addEventListener('resize', () => {
+            if (document.activeElement.tagName === 'DIV') {
+                document.activeElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>

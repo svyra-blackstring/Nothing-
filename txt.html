@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TXT → JSON AI Tester</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+    font-family:Arial;
+    background:#f5f5f5;
+    margin:0;
+    padding:20px;
+}
+h2{color:#333;}
+.box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+textarea{
+    width:100%;
+    height:200px;
+    padding:10px;
+}
+button{
+    padding:10px 20px;
+    border:none;
+    background:#10b981;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+pre{
+    background:#111;
+    color:#0f0;
+    padding:10px;
+    overflow:auto;
+    white-space:pre-wrap;
+}
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+}
+.chat{
+    height:300px;
+    overflow:auto;
+    background:white;
+    padding:10px;
+}
+.user{color:blue;margin:5px;}
+.bot{color:green;margin:5px;}
+</style>
+</head>
+<body>
+
+<h2>Super TXT → JSON AI Tester</h2>
+
+<div class="box">
+    Upload TXT File or Paste TXT<br><br>
+    <input type="file" id="file" onchange="readFile(this.files[0])"><br>
+    <textarea id="txt" placeholder="Or paste TXT here..."></textarea><br><br>
+    <button onclick="convert()">Convert To JSON</button>
+</div>
+
+<div class="box">
+    Generated JSON<br>
+    <pre id="json"></pre>
+</div>
+
+<div class="box">
+    Test AI<br><br>
+    <input id="q" placeholder="Ask a question"><br><br>
+    <button onclick="ask()">Ask</button><br><br>
+    <div class="chat" id="chat"></div>
+</div>
+
+<script>
+let AI=[];
+
+// Read TXT file
+function readFile(file){
+    let reader = new FileReader();
+    reader.onload = function(e){
+        document.getElementById("txt").value = e.target.result;
+        alert("TXT loaded from file!");
+    };
+    reader.readAsText(file);
+}
+
+// TXT → JSON
+function convert(){
+    let t = document.getElementById("txt").value.trim();
+    let lines = t.split("\n");
+    AI = [];
+    for(let l of lines){
+        l = l.trim();
+        if(!l) continue;
+        if(!l.includes(":")) continue;
+        let parts = l.split(":");
+        let keywords = parts[0].split(",").map(k=>k.trim());
+        let answer = parts.slice(1).join(":").trim();
+        AI.push({keywords, answer});
+    }
+    document.getElementById("json").innerText = JSON.stringify(AI,null,2);
+    alert("TXT converted to JSON successfully!");
+}
+
+// Simple matching AI
+function ask(){
+    let q = document.getElementById("q").value.toLowerCase().trim();
+    if(!q) return;
+    let bestScore = 0;
+    let bestAnswer = "No answer found.";
+    for(let block of AI){
+        let score = 0;
+        for(let k of block.keywords){
+            if(q.includes(k.toLowerCase())) score++;
+        }
+        if(score > bestScore){
+            bestScore = score;
+            bestAnswer = block.answer;
+        }
+    }
+    show(q, bestAnswer);
+}
+
+// Chat UI
+function show(q,a){
+    let c = document.getElementById("chat");
+    c.innerHTML += "<div class='user'>"+q+"</div>";
+    c.innerHTML += "<div class='bot'>"+a+"</div>";
+    c.scrollTop = c.scrollHeight;
+}
+</script>
+
+</body>
+</html>

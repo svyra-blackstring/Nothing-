@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Platform | Premium Login</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --bg-light: #f0fdf4;
+            --accent-green: #22c55e;
+            --glass-white: rgba(255, 255, 255, 0.4);
+            --glass-stroke: rgba(255, 255, 255, 0.6);
+            --text-dark: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* --- Liquid Background Shapes --- */
+        .orb-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.15);
+            animation: move 25s infinite alternate ease-in-out;
+        }
+        .orb-1 { width: 500px; height: 500px; top: -10%; left: -5%; }
+        .orb-2 { width: 400px; height: 400px; bottom: 5%; right: -5%; background: rgba(74, 222, 128, 0.2); animation-delay: -7s; }
+
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 80px); }
+        }
+
+        /* --- Mobile-Responsive Glass Card --- */
+        .login-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-stroke);
+            border-radius: 35px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px; /* Desktop width limit */
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 { font-size: 1.6rem; font-weight: 800; color: var(--text-dark); margin-bottom: 5px; }
+        p { font-size: 0.9rem; color: #64748b; margin-bottom: 30px; }
+
+        /* --- Liquid Input Styling --- */
+        .form-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            margin-left: 10px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .liquid-input {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255, 255, 255, 0.25);
+            color: var(--text-dark);
+            font-size: 1rem;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .liquid-input:focus {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+        }
+
+        /* --- Action Buttons --- */
+        .primary-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .divider::before, .divider::after {
+            content: ""; flex: 1; height: 1px; background: rgba(0,0,0,0.05); margin: 0 10px;
+        }
+
+        /* --- Google Button Fix for Mobile --- */
+        #g_id_signin_wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* Mobile specific font tweaks */
+        @media (max-width: 400px) {
+            .login-card { padding: 35px 20px; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="orb-container">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="login-card">
+        <h1>AI Platform</h1>
+        <p>Sign in to your account</p>
+
+        <form onsubmit="return handleFormSubmit(event)">
+            <div class="form-group">
+                <label>Gmail Address</label>
+                <input type="email" class="liquid-input" placeholder="name@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="liquid-input" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="primary-btn">Sign In</button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="onGoogleSignIn"
+             data-auto_prompt="false">
+        </div>
+
+        <div id="g_id_signin_wrapper">
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="pill"
+                 data-theme="filled_blue"
+                 data-text="continue_with"
+                 data-size="large"
+                 data-width="340">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            console.log("Connecting to API with:", email);
+            alert("API connection initiated for: " + email);
+            return false;
+        }
+
+        function onGoogleSignIn(response) {
+            console.log("Google JWT Token:", response.credential);
+            alert("Google Auth Success! Sending token to API...");
+        }
+    </script>
+</body>
+</html>

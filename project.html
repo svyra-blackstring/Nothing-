@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Platform | Create Project</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #b2dfdb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.35);
+            --glass-border: rgba(255, 255, 255, 0.7);
+            --input-bg: rgba(255, 255, 255, 0.2);
+            --accent-green: #2ecc71;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --error-red: #ff7675;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        /* --- Background Animation --- */
+        .liquid-container {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: -1; filter: blur(80px); overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            background: rgba(46, 204, 113, 0.25);
+            border-radius: 50%;
+            animation: move 20s infinite alternate ease-in-out;
+        }
+        .b1 { width: 500px; height: 500px; top: -10%; left: -5%; }
+        .b2 { width: 450px; height: 450px; bottom: -5%; right: -5%; background: #ffffff; opacity: 0.4; animation-delay: -5s; }
+
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(60px, 40px) scale(1.1); }
+        }
+
+        /* --- Glass Card --- */
+        .create-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 50px 40px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            animation: float 6s infinite ease-in-out;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+        .subtitle { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 35px; }
+
+        /* --- Inputs --- */
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-left: 15px; margin-bottom: 8px; }
+
+        .glass-input {
+            width: 100%; padding: 16px 20px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+        .glass-input:focus { background: rgba(255, 255, 255, 0.5); border-color: var(--accent-green); }
+
+        /* --- Premium Next Button --- */
+        .btn-next {
+            width: 100%; padding: 16px; margin-top: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 22px;
+            font-weight: 700; cursor: pointer;
+            transition: 0.4s;
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.1);
+        }
+        .btn-next:hover { transform: translateY(-3px); background: #fff; box-shadow: 0 15px 30px rgba(46, 204, 113, 0.2); }
+
+        /* --- Liquid Glass Toaster --- */
+        #toast-container {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast {
+            min-width: 300px;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast.error { border-left: 5px solid var(--error-red); }
+        .toast.success { border-left: 5px solid var(--accent-green); }
+        .toast.warning { border-left: 5px solid #fbc531; }
+
+        .toast.fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            to { transform: translateY(-20px) scale(0.9); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div class="liquid-container">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+    </div>
+
+    <div class="create-card">
+        <h1>Create New Project</h1>
+        <p class="subtitle">Build your AI project</p>
+
+        <div class="form-group">
+            <label>Project Name</label>
+            <input type="text" id="projName" class="glass-input" placeholder="e.g. My Neural App">
+        </div>
+
+        <div class="form-group">
+            <label>App or Website Link</label>
+            <input type="text" id="projUrl" class="glass-input" placeholder="https://example.com">
+        </div>
+
+        <button type="button" class="btn-next" onclick="validateForm()">Next Step</button>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    let icon = '✨';
+    if(type === 'error') icon = '❌';
+    if(type === 'warning') icon = '⚠️';
+
+    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 500);
+    }, 2500);
+}
+
+function validateForm() {
+    const name = document.getElementById('projName').value.trim();
+    const url = document.getElementById('projUrl').value.trim();
+    const card = document.querySelector('.create-card');
+
+    // 1. Check for empty fields
+    if (!name || !url) {
+        showToast("Please fill in all fields", "warning");
+        return;
+    }
+
+    // 2. Simple URL validation
+    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+    if (!urlPattern.test(url)) {
+        showToast("Please enter a valid URL", "error");
+        return;
+    }
+
+    // 3. Success Logic
+    showToast("Project created successfully!", "success");
+
+    // Start a smooth "Exit" animation on the card
+    setTimeout(() => {
+        card.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+        card.style.opacity = "0";
+        card.style.transform = "translateY(20px) scale(0.95)";
+        card.style.filter = "blur(10px)";
+        
+        // 4. Redirect to the Home/Dashboard page
+        setTimeout(() => {
+            window.location.href = "home.html"; // Replace with your actual filename
+        }, 600);
+    }, 1200);
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhindi AI Knowledge Builder</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            --glass: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { color: #064e3b; margin-bottom: 10px; }
+        .subtitle { color: #6b7280; font-size: 1.1rem; }
+
+        .card {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        h2 { font-size: 1.3rem; color: #111827; margin-top: 0; }
+
+        /* Step Tutorial Styling */
+        .step-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step-item {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        /* Prompt Box */
+        .prompt-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        #promptBox {
+            width: 100%;
+            height: 140px;
+            background: transparent;
+            color: #34d399;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            resize: none;
+            outline: none;
+        }
+
+        /* Upload/Input Area */
+        textarea#txtInput {
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 10px;}
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        .hidden { display: none; }
+
+        @media (max-width: 600px) {
+            .step-list { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Bhindi AI Knowledge Builder</h1>
+        <p class="subtitle">Create TXT Knowledge Files and Convert to JSON</p>
+    </header>
+
+    <div class="card">
+        <h2>TXT Generation Instructions</h2>
+        <div class="step-list">
+            <div class="step-item"><strong>Step 1:</strong> Copy the prompt below.</div>
+            <div class="step-item"><strong>Step 2:</strong> Replace APP_LINK & BLOG_LINK.</div>
+            <div class="step-item"><strong>Step 3:</strong> Use prompt in Bhindi AI.</div>
+            <div class="step-item"><strong>Step 4:</strong> Download the TXT file.</div>
+            <div class="step-item"><strong>Step 5:</strong> Upload the TXT file here.</div>
+            <div class="step-item"><strong>Step 6:</strong> Proceed to next step.</div>
+        </div>
+
+        <div class="prompt-container">
+            <textarea id="promptBox" readonly>You are an AI Knowledge Builder.
+Your job is to analyze a website or app and generate a clean AI knowledge TXT file.
+
+INPUT APP LINK: APP_LINK
+INPUT BLOG LINK: BLOG_LINK
+
+RULES:
+Output must be TXT format.
+Each line must follow:
+keyword1, keyword2, keyword3: answer
+No extra text, symbols, or explanations.</textarea>
+        </div>
+        <button class="btn btn-outline" onclick="copyPrompt()">Copy Prompt</button>
+    </div>
+
+    <div class="card">
+        <h2>Upload TXT File</h2>
+        <p style="font-size: 0.9rem; color: #666;">Select your file or paste the content below.</p>
+        <input type="file" id="fileUpload" accept=".txt" onchange="handleFile(this)">
+        <textarea id="txtInput" placeholder="Paste TXT content here..."></textarea>
+        
+        <button id="nextBtn" class="btn btn-primary" onclick="generateAndNext()">Next</button>
+    </div>
+</div>
+
+<script>
+    let generatedJSON = null;
+
+    function copyPrompt() {
+        const copyText = document.getElementById("promptBox");
+        copyText.select();
+        navigator.clipboard.writeText(copyText.value);
+        alert("Prompt copied to clipboard!");
+    }
+
+    function handleFile(input) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('txtInput').value = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+
+    function generateAndNext() {
+        const text = document.getElementById('txtInput').value.trim();
+        if (!text) {
+            alert("Please provide TXT content first.");
+            return;
+        }
+
+        const lines = text.split('\n');
+        const result = [];
+
+        lines.forEach(line => {
+            if (line.includes(':')) {
+                const parts = line.split(':');
+                const keywords = parts[0].split(',').map(k => k.trim().toLowerCase());
+                const answer = parts.slice(1).join(':').trim();
+                if (keywords.length > 0 && answer) {
+                    result.push({ keywords, answer });
+                }
+            }
+        });
+
+        if (result.length > 0) {
+            generatedJSON = result;
+            // JSON is generated in the background but not displayed.
+            console.log("JSON generated successfully.");
+            alert("Knowledge processed successfully! Moving to next stage...");
+            // You can redirect or trigger your next app logic here
+        } else {
+            alert("Could not find valid data. Please check the TXT format.");
+        }
+    }
+</script>
+
+</body>
+</html>
